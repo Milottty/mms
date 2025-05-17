@@ -1,21 +1,12 @@
-<?php include_once "config.php";
+<?php
+include_once "config.php";
 include_once "header.php";
 
-$sql = "SELECT * from users";
-$getUsers = $conn->prepare($sql);
-$getUsers->execute();
+$sql = "SELECT * from movies";
+$getMovies = $conn->prepare($sql);
+$getMovies->execute();
 
-$users = $getUsers->fetchAll();
-
- if(!isset($_SESSION['username'])){
-        header("Location: login.php");
-    }
-
-    foreach ($users as $user) {
-    }
-
-
-
+$movies = $getMovies->fetchAll();
 ?>
 <div class="d-flex" style="height: 100vh;">
     <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
@@ -78,26 +69,28 @@ $users = $getUsers->fetchAll();
         </div>
     </div>
     <div class="p-5">
+
+        <a href="addMovie.php">Add new movie</a>
+
         <table class="mb-5 table table-bordered">
-             <h1>Wellcome, <?= $_SESSION['username'] ?></h1>
             <thead>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
+                <th>Movie Name</th>
+                <th>Movie Description</th>
+                <th>Movie Quality</th>
+                <th>Movie Rating</th>
                 <th>Action</th>
             </thead>
             <tbody>
                 <?php
-                foreach ($users as $user) {
+                foreach ($movies as $movie) {
                 ?> <tr>
-                        <td><?php echo $user['id'] ?></td>
-                        <td><?php echo $user['emri'] ?></td>
-                        <td><?php echo $user['username'] ?></td>
-                        <td><?php echo $user['email'] ?></td>
-                        <td><a href="delete.php?id=<?php echo $user['id'] ?>">Delete</a> | <a href="edit.php?id=<?php echo $user['id'] ?>">Update</a></td>
-
-
+                        <td><?php echo $movie['id'] ?></td>
+                        <td><?php echo $movie['movie_name'] ?></td>
+                        <td><?php echo $movie['movie_desc'] ?></td>
+                        <td><?php echo $movie['movie_quality'] ?></td>
+                        <td><?php echo $movie['movie_rating'] ?></td>
+                        <td><a href="deleteMovie.php?id=<?php echo $movie['id'] ?>">Delete</a> | <a href="movieEdit.php?id=<?php echo $movie['id'] ?>">Update</a></td>
 
                     </tr>
                 <?php
@@ -109,15 +102,6 @@ $users = $getUsers->fetchAll();
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-<?php include_once "footer.php"; ?>
+<?php
+include_once "footer.php";
+?>
