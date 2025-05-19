@@ -1,24 +1,17 @@
 <?php
-session_start();
-
 include_once "config.php";
 include_once "header.php";
 
-$sql = "SELECT * from users";
-$getUsers = $conn->prepare($sql);
-$getUsers->execute();
+$sql = "SELECT bookings.id, users.username, movies.movie_name, bookings.nr_tickets, bookings.date, bookings.time 
+        FROM bookings 
+        INNER JOIN users ON bookings.user_id = users.id 
+        INNER JOIN movies ON bookings.movie_id = movies.id";
+$getBookings = $conn->prepare($sql);
+$getBookings->execute();
 
-$users = $getUsers->fetchAll();
-
-if(!isset($_SESSION['username'])){
-    header("Location: login.php");
-}
-
-foreach ($users as $user) {
-}
-
-
+$bookings = $getBookings->fetchAll();
 ?>
+
 <div class="d-flex" style="height: 100vh;">
     <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -30,7 +23,7 @@ foreach ($users as $user) {
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="dashboard.php" class="nav-link active" aria-current="page">
+                <a href="dashboard.php" class="nav-link text-white" aria-current="page">
                     <svg class="bi me-2" width="16" height="16">
                         <use xlink:href="dashboard.php"></use>
                     </svg>
@@ -46,7 +39,7 @@ foreach ($users as $user) {
                 </a>
             </li>
             <li>
-                <a href="bookings.php" class="nav-link text-white">
+                <a href="bookings.php" class="nav-link text-white active" aria-current="page">
                     <svg class="bi me-2" width="16" height="16">
                         <use xlink:href="bookings.php"></use>
                     </svg>
@@ -54,7 +47,7 @@ foreach ($users as $user) {
                 </a>
             </li>
             <li>
-                    <a href="logout.php" class="nav-link text-white" onclick="return confirm('Are you sure you want to logout?')">
+                    <a href="logout.php" class="nav-link text-white">
                         <svg class="bi me-2" width="16" height="16">
                             <use xlink:href="logout.php"></use>
                         </svg>
@@ -80,46 +73,35 @@ foreach ($users as $user) {
         </div>
     </div>
     <div class="p-5">
-        <table class="mb-5 table table-bordered">
-             <h1>Wellcome, <?= $_SESSION['username'] ?></h1>
+    <a href="addBooking.php" class="btn btn-success mb-4">Add New Booking</a>
+    <table class="table table-bordered">
             <thead>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
+                <th>User</th>
+                <th>Movie</th>
+                <th>Number of Tickets</th>
+                <th>Date</th>
+                <th>Time</th>
                 <th>Action</th>
             </thead>
             <tbody>
-                <?php
-                foreach ($users as $user) {
-                ?> <tr>
-                        <td><?php echo $user['id'] ?></td>
-                        <td><?php echo $user['emri'] ?></td>
-                        <td><?php echo $user['username'] ?></td>
-                        <td><?php echo $user['email'] ?></td>
-                        <td><a href="delete.php?id=<?php echo $user['id'] ?>">Delete</a> | <a href="edit.php?id=<?php echo $user['id'] ?>">Update</a></td>
-
-
-
+                <?php foreach ($bookings as $booking): ?>
+                    <tr>
+                        <td><?php echo $booking['id']; ?></td>
+                        <td><?php echo htmlspecialchars($booking['username']); ?></td>
+                        <td><?php echo htmlspecialchars($booking['movie_name']); ?></td>
+                        <td><?php echo htmlspecialchars($booking['nr_tickets']); ?></td>
+                        <td><?php echo htmlspecialchars($booking['date']); ?></td>
+                        <td><?php echo htmlspecialchars($booking['time']); ?></td>
+                        <td>
+                            <a href="deleteBooking.php?id=<?php echo $booking['id']; ?>">Delete</a> | 
+                            <a href="editBooking.php?id=<?php echo $booking['id']; ?>">Update</a>
+                        </td>
                     </tr>
-                <?php
-                }
-                ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 <?php include_once "footer.php"; ?>

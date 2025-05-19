@@ -8,35 +8,52 @@ if (isset($_POST['submit'])) {
     $movie_desc = $_POST['movie_desc'];
     $movie_quality = $_POST['movie_quality'];
     $movie_rating = $_POST['movie_rating'];
+    // Define the upload directory
+    $uploadDir = "uploads/";
+    
+    // Check if the upload directory exists, if not, create it
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
 
-    // Check if any field is empty
-    if (empty($movie_name) || empty($movie_desc) || empty($movie_quality) || empty($movie_rating)) {
-        echo "Please fill all the fields.";
-    } else {
-        // Prepare and execute the SQL query
-        $sql = "INSERT INTO movies (movie_name, movie_desc, movie_quality, movie_rating) VALUES (:movie_name, :movie_desc, :movie_quality, :movie_rating)";
-        $stmt = $conn->prepare($sql);
+    // Check if the file was uploaded
+    if (isset($_FILES['movie_image']) && $_FILES['movie_image']['error'] == 0) {
+        $fileName = basename($_FILES['movie_image']['name']);
+        $filePath = $uploadDir . $fileName;
 
-        // Bind parameters
-        $stmt->bindParam(':movie_name', $movie_name);
-        $stmt->bindParam(':movie_desc', $movie_desc);
-        $stmt->bindParam(':movie_quality', $movie_quality);
-        $stmt->bindParam(':movie_rating', $movie_rating);
+        // Move the uploaded file to the target directory
+        if (move_uploaded_file($_FILES['movie_image']['tmp_name'], $filePath)) {
+            // Prepare and execute the SQL query
+            $sql = "INSERT INTO movies (movie_name, movie_desc, movie_quality, movie_rating, movie_image) 
+                    VALUES (:movie_name, :movie_desc, :movie_quality, :movie_rating, :movie_image)";
+            $stmt = $conn->prepare($sql);
 
-        // Execute the query
-        if ($stmt->execute()) {
-            echo "Movie added successfully!";
-            header("Location: movies.php");  // Redirect to the movies page after adding the movie
+            // Bind parameters
+            $stmt->bindParam(':movie_name', $movie_name);
+            $stmt->bindParam(':movie_desc', $movie_desc);
+            $stmt->bindParam(':movie_quality', $movie_quality);
+            $stmt->bindParam(':movie_rating', $movie_rating);
+            $stmt->bindParam(':movie_image', $filePath);
+
+            if ($stmt->execute()) {
+                echo "Movie added successfully!";
+                header("Location: movies.php");
+                exit;
+            } else {
+                echo "Error adding the movie.";
+            }
         } else {
-            echo "Error adding the movie.";
+            echo "Failed to upload the image.";
         }
+    } else {
+        echo "Please select a valid image file.";
     }
 }
 ?>
 
 <div class="container">
     <h2 class="mt-5">Add New Movie</h2>
-    <form method="POST" action="addMovie.php">
+    <form method="POST" action="addMovie.php" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="movie_name" class="form-label">Movie Name</label>
             <input type="text" class="form-control" id="movie_name" name="movie_name" required>
@@ -57,6 +74,10 @@ if (isset($_POST['submit'])) {
         <div class="mb-3">
             <label for="movie_rating" class="form-label">Movie Rating</label>
             <input type="number" class="form-control" id="movie_rating" name="movie_rating" min="0" max="10" required>
+        </div>
+        <div class="mb-3">
+            <label for="movie_image" class="form-label">Movie Image</label>
+            <input type="file" class="form-control" id="movie_image" name="movie_image" accept="image/*" required>
         </div>
         <button type="submit" name="submit" class="btn btn-primary">Add Movie</button>
     </form>

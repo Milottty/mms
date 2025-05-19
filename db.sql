@@ -15,7 +15,7 @@ CREATE TABLE `movies`(
     `movie_quality` varchar(255)NOT NULL,
     `movie_rating` varchar(255)NOT NULL,
     `movie_image` varchar(255)NOT NULL
-);
+ );
 
 CREATE TABLE `bookings`(
     `id` int(255)NOT NULL,
@@ -30,11 +30,14 @@ CREATE TABLE `bookings`(
 ALTER TABLE `users`
     ADD PRIMARY KEY (`id`);
 
-ALTER TABLE `movies`
+ALTER TABLE `movies`3
     ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `bookings`
     ADD PRIMARY KEY (`id`);
+
+
+
 
 
 ALTER TABLE `users`
@@ -46,3 +49,4 @@ ALTER TABLE `movies`
     
 ALTER TABLE `bookings`
     MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
