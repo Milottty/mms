@@ -5,7 +5,8 @@ CREATE TABLE `users`(
     `email` varchar(255)NOT NULL,
     `password` varchar(255)NOT NULL,
     `confirm_password` varchar(255)NOT NULL,
-    `is_admin` varchar(255)NOT NULL
+    `is_admin` varchar(255)NOT NULL,
+    `profile_image` varchar(255)NOT NULL
 );
 
 CREATE TABLE `movies`(

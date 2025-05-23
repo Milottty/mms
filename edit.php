@@ -1,17 +1,22 @@
 <?php
     include_once 'config.php';
 
+    session_start();
+
     $id = $_GET['id'];
 
     $sql = "SELECT * FROM users WHERE id=:id";
-
     $prep = $conn->prepare($sql);
-
     $prep->bindParam(":id", $id);
-
     $prep->execute();
-
     $data = $prep->fetch();
+
+    if (!$data || $data['username'] !== $_SESSION['username']) {
+        // Unauthorized access attempt
+        header("Location: dashboard.php");
+        exit();
+}
+
 
 
 ?>

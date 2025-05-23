@@ -12,7 +12,7 @@
 
                 <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
 
-                <form class="mx-1 mx-md-4" method="POST" action="registerLogic.php">
+                <form class="mx-1 mx-md-4" method="POST" action="registerLogic.php"  enctype="multipart/form-data">
 
                   <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
@@ -52,6 +52,14 @@
                       <label class="form-label" for="form3Example4cd">Repeat your password</label>
                     </div>
                   </div>
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-image fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                    <input type="file" name="profile_image" class="form-control" />
+                    <label class="form-label">Profile Image</label>
+                  </div>
+                </div>
+
 
 
                   <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
