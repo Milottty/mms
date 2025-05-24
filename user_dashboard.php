@@ -69,9 +69,6 @@ if (!$user) {
     <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
       <ul class="navbar-nav mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active text-white" href="dashboard.php">My Profile</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link text-white" href="movies.php">Movies</a>
         </li>
         <li class="nav-item">
@@ -88,7 +85,7 @@ if (!$user) {
         </a>
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown" style="background-color: #333;">
           <li><a class="dropdown-item" href="settings.php">Settings</a></li>
-          <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+          <li><a class="dropdown-item" href="dashboard.php">Profile</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="logout.php">Logout</a></li>
         </ul>

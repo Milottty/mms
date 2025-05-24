@@ -76,9 +76,6 @@ if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1) {
     <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
       <ul class="navbar-nav mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link text-white" href="dashboard.php">Users</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link text-white" href="movies.php">Movies</a>
         </li>
         <li class="nav-item">
@@ -95,7 +92,7 @@ if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1) {
         </a>
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
           <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><a class="dropdown-item" href="#">Profile</a></li>
+          <li><a class="dropdown-item" href="user_dashboard.php  ">Profile</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="logout.php" onclick="return confirm('Are you sure you want to logout?')">Logout</a></li>
         </ul>

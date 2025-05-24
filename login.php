@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        if ($user['is_admin'] == 1) {
     header("Location: dashboard.php"); // Admin dashboard
     } else {
-    header("Location: user_dashboard.php"); // Normal user dashboard
+    header("Location: movies.php"); // Normal user dashboard
     }
         exit();
     } else {

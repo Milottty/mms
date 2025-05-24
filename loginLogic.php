@@ -34,7 +34,7 @@ if (isset($_POST['submit'])) {
                 if ($data['is_admin']) {
                     header("Location:   dashboard.php");
                 } else {
-                    header("Location: user_dashboard.php");
+                    header("Location: movies.php");
                 }
                 exit();
             } else {

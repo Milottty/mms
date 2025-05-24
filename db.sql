@@ -31,7 +31,7 @@ CREATE TABLE `bookings`(
 ALTER TABLE `users`
     ADD PRIMARY KEY (`id`);
 
-ALTER TABLE `movies`3
+ALTER TABLE `movies`
     ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `bookings`
@@ -56,4 +56,4 @@ ALTER TABLE `movies`
   ADD COLUMN views INT(11) NOT NULL DEFAULT 0 AFTER year;
 
 
-  ALTER TABLE `users` ADD COLUMN ALTER TABLE `users` ADD COLUMN role ENUM('admin', 'user') NOT NULL DEFAULT 'user';
+  ALTER TABLE `users` ADD COLUMN role ENUM('admin', 'user') NOT NULL DEFAULT 'user';
