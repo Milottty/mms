@@ -13,6 +13,7 @@ if (isset($_POST['submit'])) {
 
   $profileImagePath = '';
 
+
 if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
     $targetDir = "uploads/";
     $fileName = basename($_FILES["profile_image"]["name"]);

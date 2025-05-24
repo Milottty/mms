@@ -1,5 +1,4 @@
 <?php
-
 include_once "config.php";
 include_once "header.php";
 
@@ -9,122 +8,175 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Get current logged-in user info
 $sql = "SELECT * FROM users WHERE username = ?";
 $stmt = $conn->prepare($sql);
 $stmt->execute([$_SESSION['username']]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
-    // If user not found (shouldn't happen), logout
     header("Location: logout.php");
     exit();
 }
 ?>
 
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 <style>
     body {
-        background-color: #121212;
-        color: white;
+        background-color: #0d0d0d;
+        color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
     }
 
-    .navbar-dark .navbar-nav .nav-link {
-        color: rgba(255, 255, 255, 0.85);
+    .sidebar {
+        width: 240px;
+        height: 100vh;
+        background-color: #141414;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 20px;
+        border-right: 1px solid #2a2a2a;
     }
 
-    .navbar-dark .navbar-nav .nav-link:hover {
+    .sidebar a {
+        display: block;
+        padding: 15px 25px;
+        color: #ccc;
+        text-decoration: none;
+        font-size: 15px;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+        background-color: #1f1f1f;
+        color: #fff;
+    }
+
+    .sidebar a i {
+        margin-right: 12px;
+    }
+
+    .content {
+        margin-left: 240px;
+        padding: 40px;
+        background-color: #0d0d0d;
+        min-height: 100vh;
+    }
+
+    .card {
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 10px;
+        padding: 25px;
+        color: #e0e0e0;
+    }
+
+    .card h4 {
         color: #fff;
     }
 
     .table {
-        background-color: #1e1e1e;
-        color: white;
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+        border-collapse: collapse;
+        width: 100%;
     }
 
-    .table th,
+    .table th {
+        background-color: #222;
+        color: #fff;
+        font-weight: 600;
+        border: 1px solid #333;
+        padding: 12px 15px;
+    }
+
     .table td {
-        color: white;
-        vertical-align: middle;
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+        border: 1px solid #333;
+        padding: 12px 15px;
     }
 
-    .dropdown-menu-dark {
-        background-color: #333;
+    .btn-link {
+        color: #1dbf73;
+        text-decoration: none;
     }
 
-    .dropdown-menu-dark .dropdown-item:hover {
-        background-color: #dc3545;
+    .btn-link:hover {
+        color: #17a864;
+        text-decoration: underline;
+    }
+
+    .btn-link.text-danger:hover {
+        color: #e3342f;
+    }
+
+    .btn-outline-light {
+        border: 1px solid #555;
+        color: #ccc;
+        background-color: transparent;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .btn-outline-light:hover {
+        background-color: #1dbf73;
+        color: #fff;
+        border-color: #1dbf73;
+    }
+
+    .rounded-circle {
+        object-fit: cover;
     }
 </style>
 
-<!-- Navbar -->
+<div class="sidebar">
+    <a href="dashboard.php" class="active"><i class="fas fa-user"></i> Profile</a>
+    <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
+    <a href="movies.php"><i class="fas fa-film"></i> Movies</a>
+    <a href="bookings.php"><i class="fas fa-ticket-alt"></i> Bookings</a>
+    <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
 
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold text-white" href="#">User Panel</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
-      <span class="navbar-toggler-icon"></span>
+<div class="content">
+    <button onclick="Location: movies.php;" class="btn-outline-light mb-4">
+        <i class="fas fa-arrow-left me-2"></i> Back
     </button>
 
-    <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
-      <ul class="navbar-nav mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link text-white" href="movies.php">Movies</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-white" href="bookings.php">Bookings</a>
-        </li>
-      </ul>
-    </div>
+    <h2 class="mb-4">Profile Overview</h2>
+    <div class="card">
+        <div class="d-flex align-items-center mb-3">
+            <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" width="60" height="60" class="rounded-circle me-3" alt="Profile" />
+            <h4 class="mb-0"><?= htmlspecialchars($user['emri']) ?> (<?= htmlspecialchars($user['username']) ?>)</h4>
+        </div>
 
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" width="30" height="30" class="rounded-circle me-2" alt="Profile" />
-          <span><?= htmlspecialchars($_SESSION['username']) ?></span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown" style="background-color: #333;">
-          <li><a class="dropdown-item" href="settings.php">Settings</a></li>
-          <li><a class="dropdown-item" href="dashboard.php">Profile</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="logout.php">Logout</a></li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-<!-- Page Content -->
-<div class="container mt-5">
-    <h1 class="mb-4">Welcome, <?= htmlspecialchars($_SESSION['username']) ?></h1>
-    <div class="table-responsive">
-        <table class="table table-bordered table-dark table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><?= htmlspecialchars($user['id']) ?></td>
-                    <td><?= htmlspecialchars($user['emri']) ?></td>
-                    <td><?= htmlspecialchars($user['username']) ?></td>
-                    <td><?= htmlspecialchars($user['email']) ?></td>
-                    <td>
-                         <a href="edit.php?id=<?= $user['id'] ?>" class="text-info">Update</a> |
-                        <a href="delete.php?id=<?= $user['id'] ?>" class="text-danger" onclick="return confirm('Are you sure you want to delete your account?')">Delete</a>
-                        </td>
-                </tr>
-            </tbody>
+        <table class="table">
+            <tr>
+                <th>ID:</th>
+                <td><?= htmlspecialchars($user['id']) ?></td>
+            </tr>
+            <tr>
+                <th>Email:</th>
+                <td><?= htmlspecialchars($user['email']) ?></td>
+            </tr>
+            <tr>
+                <th>Username:</th>
+                <td><?= htmlspecialchars($user['username']) ?></td>
+            </tr>
         </table>
+
+        <div class="mt-3">
+            <a href="edit.php?id=<?= $user['id'] ?>" class="btn-link">Update Info</a> |
+            <a href="delete.php?id=<?= $user['id'] ?>" class="btn-link text-danger" onclick="return confirm('Are you sure you want to delete your account?')">Delete Account</a>
+        </div>
     </div>
 </div>
 
 <?php include_once "footer.php"; ?>
-
-
-

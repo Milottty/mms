@@ -25,6 +25,7 @@ if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
+$_SESSION['profile_image'] = $user['profile_image'];
 ?>
 
 <style>
@@ -90,7 +91,15 @@ if (!isset($_SESSION['username'])) {
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <img src="<?= isset($_SESSION['profile_image']) ? $_SESSION['profile_image'] : 'img/default.png' ?>" width="30" height="30" class="rounded-circle me-2" alt="Profile">
+    <img src="<?php echo $_SESSION['profile_image']; ?>" 
+     alt="Profile" 
+     width="32" height="32" 
+     class="rounded-circle me-2">
+
+<a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <?php if ($showImage): ?>
+    <img src="<?= $profileImage ?>" width="30" height="30" class="rounded-circle me-2" alt="Profile">
+  <?php endif; ?>
       <span><?= $_SESSION['username'] ?></span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
