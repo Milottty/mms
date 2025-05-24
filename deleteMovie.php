@@ -1,6 +1,15 @@
 <?php
 include_once "config.php";
 
+
+session_start();
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+    // Not admin, block access and redirect
+    header("Location: movies.php");
+    exit();
+}
+
+
 // Check if the ID is passed via GET
 if (isset($_GET['id'])) {
     $movieId = $_GET['id'];

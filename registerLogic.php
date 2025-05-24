@@ -39,7 +39,7 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
         $inserSql->bindParam(':password', $password);
         $inserSql->bindParam(':confirm_password', $password);
         $inserSql->bindParam(':is_admin', $isAdmin);
-        $inserSql->bindParam(':profile_image', $$profileImagePath);
+        $inserSql->bindParam(':profile_image', $profileImagePath);
 
         $inserSql->execute();
 

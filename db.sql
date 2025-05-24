@@ -51,3 +51,9 @@ ALTER TABLE `movies`
 ALTER TABLE `bookings`
     MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `movies`
+  ADD COLUMN year INT(4) NOT NULL DEFAULT 0 AFTER movie_rating,
+  ADD COLUMN views INT(11) NOT NULL DEFAULT 0 AFTER year;
+
+
+  ALTER TABLE `users` ADD COLUMN ALTER TABLE `users` ADD COLUMN role ENUM('admin', 'user') NOT NULL DEFAULT 'user';

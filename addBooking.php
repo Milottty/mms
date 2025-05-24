@@ -1,6 +1,12 @@
 <?php
+session_start(); // Make sure session is started
 include_once "config.php";
 include_once "header.php";
+
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
 
 if (isset($_POST['submit'])) {
     // Get data from the form
@@ -23,7 +29,7 @@ if (isset($_POST['submit'])) {
 
     // Execute the query
     if ($stmt->execute()) {
-        echo "Booking added successfully!";
+        // Redirect after success
         header("Location: bookings.php");
         exit;
     } else {
@@ -37,23 +43,33 @@ $moviesStmt = $conn->prepare($moviesQuery);
 $moviesStmt->execute();
 $movies = $moviesStmt->fetchAll();
 
-// Fetch users for the dropdown
-$usersQuery = "SELECT id, username FROM users";
-$usersStmt = $conn->prepare($usersQuery);
-$usersStmt->execute();
-$users = $usersStmt->fetchAll();
-
+// Fetch users depending on role
+if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1) {
+    // Admin can select all users
+    $usersQuery = "SELECT id, username FROM users";
+    $usersStmt = $conn->prepare($usersQuery);
+    $usersStmt->execute();
+    $users = $usersStmt->fetchAll();
+} else {
+    // Regular user can only select themselves
+    $usersQuery = "SELECT id, username FROM users WHERE username = :username LIMIT 1";
+    $usersStmt = $conn->prepare($usersQuery);
+    $usersStmt->bindParam(':username', $_SESSION['username']);
+    $usersStmt->execute();
+    $users = $usersStmt->fetchAll();
+}
 ?>
 
 <div class="container">
     <h2 class="mt-5">Add New Booking</h2>
     <form method="POST" action="addBooking.php">
+
         <div class="mb-3">
             <label for="user_id" class="form-label">User</label>
             <select class="form-select" id="user_id" name="user_id" required>
                 <option value="">Select User</option>
                 <?php foreach ($users as $user): ?>
-                    <option value="<?= $user['id']; ?>"><?= $user['username']; ?></option>
+                    <option value="<?= $user['id']; ?>"><?= htmlspecialchars($user['username']); ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -63,7 +79,7 @@ $users = $usersStmt->fetchAll();
             <select class="form-select" id="movie_id" name="movie_id" required>
                 <option value="">Select Movie</option>
                 <?php foreach ($movies as $movie): ?>
-                    <option value="<?= $movie['id']; ?>"><?= $movie['movie_name']; ?></option>
+                    <option value="<?= $movie['id']; ?>"><?= htmlspecialchars($movie['movie_name']); ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -87,6 +103,4 @@ $users = $usersStmt->fetchAll();
     </form>
 </div>
 
-<?php
-include_once "footer.php";
-?>
+<?php include_once "footer.php"; ?>

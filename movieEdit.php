@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="mb-3">
                 <label for="movie_rating" class="form-label">Movie Rating</label>
-                <input type="number" class="form-control" id="movie_rating" name="movie_rating" value="<?php echo htmlspecialchars($movie['movie_rating']); ?>" required min="1" max="5">
+                <input type="number" class="form-control" id="movie_rating" name="movie_rating" value="<?php echo htmlspecialchars($movie['movie_rating']); ?>" required min="1" max="10">
             </div>
             <button type="submit" class="btn btn-primary">Update Movie</button>
         </form>
