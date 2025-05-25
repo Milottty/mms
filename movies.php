@@ -141,6 +141,7 @@ $movies = $getMovies->fetchAll();
     </ul>
   </div>
 </nav>
+
 <div class="container my-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>🎬 Movie Management</h2>
