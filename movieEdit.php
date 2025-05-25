@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $movie_name = $_POST['movie_name'];
     $movie_desc = $_POST['movie_desc'];
     $movie_quality = $_POST['movie_quality'];
+    $movie_year = $_POST['movie_year'];
     $movie_rating = $_POST['movie_rating'];
     $type = $_POST['type'];
 
@@ -36,11 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $movie_url = $movie['movie_url'];
 }
 
-    $updateSql = "UPDATE movies SET movie_name = :movie_name, movie_desc = :movie_desc, movie_quality = :movie_quality, movie_rating = :movie_rating, movie_url = :movie_url, type = :type WHERE id = :id";
+   $updateSql = "UPDATE movies SET movie_name = :movie_name, movie_desc = :movie_desc, movie_quality = :movie_quality, year = :year, movie_rating = :movie_rating, movie_url = :movie_url, type = :type WHERE id = :id";
     $updateMovie = $conn->prepare($updateSql);
     $updateMovie->bindParam(':movie_name', $movie_name);
     $updateMovie->bindParam(':movie_desc', $movie_desc);
     $updateMovie->bindParam(':movie_quality', $movie_quality);
+    $updateMovie->bindParam(':year', $movie_year, PDO::PARAM_INT);
     $updateMovie->bindParam(':movie_rating', $movie_rating);
     $updateMovie->bindParam(':movie_url', $movie_url);
     $updateMovie->bindParam(':type', $type);
@@ -123,12 +125,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <option value="SD" <?php if ($movie['movie_quality'] == 'SD') echo 'selected'; ?>>SD</option>
       </select>
     </div>
-
+    <div class="mb-3">
+            <label for="movie_year" class="form-label">Movie Year</label>
+            <select class="form-select" id="movie_year" name="movie_year" required>
+              <?php 
+              $currentYear = date('Y');
+              for ($year = $currentYear; $year >= 2000; $year--) {
+                  echo "<option value=\"$year\">$year</option>";
+              }
+              ?>
+            </select>
+          </div>
     <div class="mb-3">
       <label for="movie_rating" class="form-label">Rating (1-10)</label>
       <input type="number" class="form-control" id="movie_rating" name="movie_rating" value="<?php echo htmlspecialchars($movie['movie_rating']); ?>" required min="1" max="10">
     </div>
-
+    
     <div class="mb-3">
         <label for="movie_url" class="form-label">Movie Video URL</label>
          <input type="url" class="form-control" id="movie_url" name="movie_url" value="<?php echo htmlspecialchars($movie['movie_url']); ?>" required>

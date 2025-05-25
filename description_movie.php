@@ -23,7 +23,12 @@ if (!$movie) {
 
 $year = isset($movie['year']) && $movie['year'] > 0 ? $movie['year'] : 'N/A';
 $views = isset($movie['views']) ? (int)$movie['views'] : 0;
+$updateViews = $conn->prepare("UPDATE movies SET views = views + 1 WHERE id = :id");
+$updateViews->bindParam(':id', $movie_id, PDO::PARAM_INT);
+$updateViews->execute();
+
 ?>
+
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>

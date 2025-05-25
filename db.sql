@@ -35,6 +35,18 @@ CREATE TABLE `watchlist` (
   FOREIGN KEY (`movie_id`) REFERENCES `movies`(id)
 );
 
+CREATE TABLE settings (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    site_name VARCHAR(255) NOT NULL,
+    site_description TEXT NOT NULL,
+    logo_url TEXT,
+    theme VARCHAR(10) DEFAULT 'dark'
+);
+
+
+
+
+
 ALTER TABLE `users`
     ADD PRIMARY KEY (`id`);
 
@@ -63,8 +75,11 @@ ALTER TABLE `movies`
   ADD COLUMN views INT(11) NOT NULL DEFAULT 0 AFTER year;
 
 
-  ALTER TABLE `users` ADD COLUMN role ENUM('admin', 'user') NOT NULL DEFAULT 'user';
+  ALTER TABLE `users` ADD COLUMN role ENUM('admin', 'user') NOT NULL DEFAULT 'user';  
 
   ALTER TABLE `movies` ADD COLUMN type VARCHAR(10) DEFAULT 'Movie';
 
 ALTER TABLE `movies` ADD COLUMN movie_url VARCHAR(255) NOT NULL;
+
+
+ALTER TABLE `movies` ADD COLUMN `cinema` VARCHAR(50);

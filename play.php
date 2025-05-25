@@ -9,6 +9,32 @@ if (!isset($_GET['id'])) {
 }
 
 $id = $_GET['id'];
+
+// Watchlist: add current movie to database if user is logged in
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+    $stmtUser = $conn->prepare("SELECT id FROM users WHERE username = ?");
+    $stmtUser->execute([$username]);
+    $user = $stmtUser->fetch();
+
+    if ($user) {
+        $userId = $user['id'];
+
+        // Check if already in watchlist
+        $check = $conn->prepare("SELECT COUNT(*) FROM watchlist WHERE user_id = ? AND movie_id = ?");
+        $check->execute([$userId, $id]);
+        $alreadyExists = $check->fetchColumn();
+
+        // If not, insert
+        if (!$alreadyExists) {
+            $add = $conn->prepare("INSERT INTO watchlist (user_id, movie_id) VALUES (?, ?)");
+            $add->execute([$userId, $id]);
+        }
+    }
+}
+
+
+$id = $_GET['id'];
 $sql = "SELECT * FROM movies WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->execute([$id]);

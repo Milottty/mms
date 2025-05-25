@@ -154,8 +154,8 @@ if (!$user) {
     <h2 class="mb-4">Profile Overview</h2>
     <div class="card">
         <div class="d-flex align-items-center mb-3">
-            <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" width="60" height="60" class="rounded-circle me-3" alt="Profile" />
-            <h4 class="mb-0"><?= htmlspecialchars($user['emri']) ?> (<?= htmlspecialchars($user['username']) ?>)</h4>
+          <img src="<?= isset($_SESSION['profile_image']) ? $_SESSION['profile_image'] : 'img/default.png' ?>" width="30" height="30" class="rounded-circle me-2">
+            <h4 class="mb-0"><?= htmlspecialchars($user['emri']) ?> <?= htmlspecialchars($user['username']) ?></h4>
         </div>
 
         <table class="table">
