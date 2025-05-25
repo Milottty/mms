@@ -8,7 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     // Prepare query to get user with username
-    $stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE username = ?");
+   $stmt = $conn->prepare("SELECT id, username, password, role, is_admin FROM users WHERE username = ?");
+
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
@@ -16,7 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Login success - save user info and role in session
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];  // or is_admin
+        $_SESSION['role'] = $user['role'];  // or is_admi
+        $_SESSION['is_admin'] = $user['is_admin']; // ✅ Add this
 
         // Redirect based on role
        if ($user['is_admin'] == 1) {

@@ -7,16 +7,20 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
     die('<div class="alert alert-danger">Unauthorized access</div>');
 }
 
-
-
-
 if (isset($_POST['submit'])) {
-    $movie_name = $_POST['movie_name'];
-    $movie_desc = $_POST['movie_desc'];
-    $movie_quality = $_POST['movie_quality'];
-    $movie_rating = $_POST['movie_rating'];
-    $movie_year = $_POST['movie_year'];
-    $movie_type = $_POST['movie_type']; 
+    // Trim inputs to avoid whitespace issues
+    $movie_name = trim($_POST['movie_name'] ?? '');
+    $movie_desc = trim($_POST['movie_desc'] ?? '');
+    $movie_quality = trim($_POST['movie_quality'] ?? '');
+    $movie_rating = trim($_POST['movie_rating'] ?? '');
+    $movie_year = trim($_POST['movie_year'] ?? '');
+    $movie_type = trim($_POST['movie_type'] ?? '');
+
+    // Basic validation
+    if (!$movie_name || !$movie_desc || !$movie_quality || !$movie_rating || !$movie_year || !$movie_type) {
+        echo "<div class='alert alert-danger'>Please fill all required fields.</div>";
+        exit;
+    }
 
     $random_views = rand(0, 10000000);
 
@@ -26,8 +30,10 @@ if (isset($_POST['submit'])) {
     }
 
     // Handle poster image upload (required)
-    if (isset($_FILES['movie_image']) && $_FILES['movie_image']['error'] == 0) {
+    if (isset($_FILES['movie_image']) && $_FILES['movie_image']['error'] === UPLOAD_ERR_OK) {
+        // Sanitize file name to avoid issues
         $fileName = basename($_FILES['movie_image']['name']);
+        $fileName = preg_replace("/[^A-Za-z0-9_\-\.]/", '_', $fileName);
         $filePath = $uploadDir . $fileName;
 
         if (!move_uploaded_file($_FILES['movie_image']['tmp_name'], $filePath)) {
@@ -42,9 +48,9 @@ if (isset($_POST['submit'])) {
     // Handle movie video upload OR URL input
     $movie_url = null;
 
-    // If user uploaded a movie file
-    if (isset($_FILES['movie_url']) && $_FILES['movie_url']['error'] == 0) {
+    if (isset($_FILES['movie_url']) && $_FILES['movie_url']['error'] === UPLOAD_ERR_OK) {
         $videoName = basename($_FILES['movie_url']['name']);
+        $videoName = preg_replace("/[^A-Za-z0-9_\-\.]/", '_', $videoName);
         $videoExt = strtolower(pathinfo($videoName, PATHINFO_EXTENSION));
         $allowedExts = ['mp4', 'mkv', 'avi', 'mov'];
 
@@ -74,7 +80,7 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    // Insert into DB
+    // Prepare and execute DB insert
     $sql = "INSERT INTO movies (movie_name, movie_desc, movie_quality, movie_rating, movie_image, year, views, type, movie_url) 
             VALUES (:movie_name, :movie_desc, :movie_quality, :movie_rating, :movie_image, :year, :views, :type, :movie_url)";
     $stmt = $conn->prepare($sql);
@@ -93,18 +99,18 @@ if (isset($_POST['submit'])) {
         header("Location: movies.php");
         exit;
     } else {
-        echo "<div class='alert alert-danger'>Error adding the movie.</div>";
+        echo "<div class='alert alert-danger'>Error adding the movie. Please check your data and try again.</div>";
     }
 }
 ?>
 
+<!-- HTML form and styling below -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
   body {
     background-color: #121212;
     color: #fff;
   }
-
   .form-container {
     background-color: #1e1e1e;
     padding: 30px;
@@ -112,28 +118,23 @@ if (isset($_POST['submit'])) {
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     margin-top: 50px;
   }
-
   .form-label {
     color: #ccc;
   }
-
   .btn-primary {
     background-color: #dc3545;
     border-color: #dc3545;
   }
-
   .btn-primary:hover {
     background-color: #c82333;
     border-color: #bd2130;
   }
-
   .form-control,
   .form-select {
     background-color: #292929;
     border: 1px solid #444;
     color: #fff;
   }
-
   .form-control:focus,
   .form-select:focus {
     background-color: #292929;
@@ -171,7 +172,7 @@ if (isset($_POST['submit'])) {
 
           <div class="mb-3">
             <label for="movie_rating" class="form-label">Movie Rating</label>
-            <input type="number" class="form-control" id="movie_rating" name="movie_rating" min="0" max="10" required>
+            <input type="number" class="form-control" id="movie_rating" name="movie_rating" min="0" max="10" step="0.1" required>
           </div>
 
           <div class="mb-3">

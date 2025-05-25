@@ -13,17 +13,18 @@ if (isset($_POST['submit'])) {
     $movie_id = $_POST['movie_id'];
     $nr_tickets = $_POST['nr_tickets'];
     $date = $_POST['date'];
+    $cinema = $_POST['cinema'];
     $time = $_POST['time'];
 
-    $sql = "INSERT INTO bookings (user_id, movie_id, nr_tickets, date, time)
-            VALUES (:user_id, :movie_id, :nr_tickets, :date, :time)";
+    $sql = "INSERT INTO bookings (user_id, movie_id, nr_tickets, date, time, cinema )
+            VALUES (:user_id, :movie_id, :nr_tickets, :date, :time, :cinema)";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':user_id', $user_id);
     $stmt->bindParam(':movie_id', $movie_id);
     $stmt->bindParam(':nr_tickets', $nr_tickets);
     $stmt->bindParam(':date', $date);
     $stmt->bindParam(':time', $time);
-
+    $stmt->bindParam(':cinema', $cinema);
     if ($stmt->execute()) {
         header("Location: bookings.php");
         exit;
@@ -133,11 +134,11 @@ foreach ($allMovies as $movie) {
 
         <div class="form-group">
             <label for="cinema" class="form-label">Cinema</label>
-            <select class="form-select" id="cinema" required onchange="filterMovies()">
+        <select name="cinema" class="form-select" required>
                 <option value="">Select Cinema</option>
                 <option value="Cineplex">Cineplex</option>
                 <option value="Cinestar">Cinestar</option>
-            </select>
+        </select>
         </div>
 
         <div class="form-group">
