@@ -127,6 +127,9 @@ $views = isset($movie['views']) ? (int)$movie['views'] : 0;
     <h1 class="movie-title">
       <?php echo htmlspecialchars($movie['movie_name']); ?> (<?php echo $year; ?>)
     </h1>
+     <div class="movie-type">
+              <?= htmlspecialchars($movie['type'] ?? 'Movie') ?>
+            </div> <br>
     <div class="movie-meta">
       <span>⭐ <?php echo htmlspecialchars($movie['movie_rating']); ?>/10</span>
       <span>📺 <?php echo htmlspecialchars($movie['movie_quality']); ?></span>

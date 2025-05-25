@@ -26,7 +26,14 @@ CREATE TABLE `bookings`(
     `date` varchar(255)NOT NULL,
     `time` varchar(255)NOT NULL
 );
-
+CREATE TABLE `watchlist` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `movie_id` INT NOT NULL,
+ `watched_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(id),
+  FOREIGN KEY (`movie_id`) REFERENCES `movies`(id)
+);
 
 ALTER TABLE `users`
     ADD PRIMARY KEY (`id`);
@@ -57,3 +64,7 @@ ALTER TABLE `movies`
 
 
   ALTER TABLE `users` ADD COLUMN role ENUM('admin', 'user') NOT NULL DEFAULT 'user';
+
+  ALTER TABLE `movies` ADD COLUMN type VARCHAR(10) DEFAULT 'Movie';
+
+ALTER TABLE `movies` ADD COLUMN movie_url VARCHAR(255) NOT NULL;

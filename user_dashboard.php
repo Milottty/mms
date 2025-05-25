@@ -139,6 +139,7 @@ if (!$user) {
 
 <div class="sidebar">
     <a href="dashboard.php" class="active"><i class="fas fa-user"></i> Profile</a>
+     <a href="watchlist.php" ><i class="fas fa-user"></i> WatchList</a>
     <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
     <a href="movies.php"><i class="fas fa-film"></i> Movies</a>
     <a href="bookings.php"><i class="fas fa-ticket-alt"></i> Bookings</a>
@@ -146,8 +147,8 @@ if (!$user) {
 </div>
 
 <div class="content">
-    <button onclick="Location: movies.php;" class="btn-outline-light mb-4">
-        <i class="fas fa-arrow-left me-2"></i> Back
+    <button class="btn-outline-light mb-4 d-none">
+        <a href="movies.php" class="btn-outline-light mb-4?">  <i class="fas fa-arrow-left me-2"></i> Back </a>
     </button>
 
     <h2 class="mb-4">Profile Overview</h2>

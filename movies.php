@@ -4,7 +4,19 @@ include_once "header.php";
 
 session_start();
 
-$sql = "SELECT * FROM movies";
+
+// Get filter param from URL
+$filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+
+// Modify SQL based on filter
+if ($filter === 'movie') {
+  $sql = "SELECT * FROM movies WHERE type = 'Movie'";
+} elseif ($filter === 'serial') {
+  $sql = "SELECT * FROM movies WHERE type = 'Serial'";
+} else {
+  $sql = "SELECT * FROM movies";
+}
+
 $getMovies = $conn->prepare($sql);
 $getMovies->execute();
 $movies = $getMovies->fetchAll();
@@ -44,6 +56,11 @@ $movies = $getMovies->fetchAll();
   .movie-title {
     font-size: 1.1rem;
     font-weight: bold;
+    margin-bottom: 2px;
+  }
+  .movie-type {
+    font-size: 0.85rem;
+    color: #bbb;
     margin-bottom: 5px;
   }
   .movie-rating {
@@ -109,6 +126,7 @@ $movies = $getMovies->fetchAll();
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
           <li><a class="dropdown-item" href="settings.php">Settings</a></li>
           <li><a class="dropdown-item" href="user_dashboard.php">Profile</a></li>
+            <li><a class="dropdown-item" href="watchlist.php">WatchList</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="logout.php" onclick="return confirm('Are you sure you want to logout?')">Logout</a></li>
         </ul>
@@ -120,15 +138,26 @@ $movies = $getMovies->fetchAll();
 <div class="container my-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>🎬 Movie Management</h2>
-    <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
-    <a href="addMovie.php" class="btn btn-primary">Add New Movie</a>
-    <?php endif; ?>
+    <div class="d-flex align-items-center gap-2">
+      <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
+      <a href="addMovie.php" class="btn btn-primary">Add New Movie</a>
+      <?php endif; ?>
 
+      <!-- Filter select -->
+      <form id="filterForm" method="GET" class="mb-0">
+        <select name="filter" class="form-select" onchange="document.getElementById('filterForm').submit()">
+          <option value="all" <?php if($filter === 'all') echo 'selected'; ?>>All</option>
+          <option value="movie" <?php if($filter === 'movie') echo 'selected'; ?>>Movies</option>
+          <option value="serial" <?php if($filter === 'serial') echo 'selected'; ?>>Serials</option>
+        </select>
+      </form>
+    </div>
   </div>
 
   <div class="row g-4">
     <?php foreach ($movies as $movie): ?>
       <div class="col-sm-6 col-md-4 col-lg-3">
+        
         <div class="movie-card">
           <?php if ($movie['movie_image'] && file_exists($movie['movie_image'])): ?>
             <a href="description_movie.php?id=<?php echo $movie['id']; ?>" class="movie-img-link">
@@ -139,7 +168,10 @@ $movies = $getMovies->fetchAll();
           <?php endif; ?>
           <div class="movie-details">
             <div class="movie-title">
-              <?php echo htmlspecialchars($movie['movie_name']); ?> 
+              <?php echo htmlspecialchars($movie['movie_name']); ?>
+            </div>
+            <div class="movie-type">
+              <?= htmlspecialchars($movie['type'] ?? 'Movie') ?>
             </div>
             <div class="movie-rating">⭐ <?php echo htmlspecialchars($movie['movie_rating']); ?>/10</div>
             <div class="movie-views">👁️ Views: <?php echo (int)$movie['views']; ?></div>

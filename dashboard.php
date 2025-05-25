@@ -25,7 +25,7 @@ if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
-$_SESSION['profile_image'] = $user['profile_image'];
+
 ?>
 
 <style>
@@ -89,27 +89,19 @@ $_SESSION['profile_image'] = $user['profile_image'];
 
     <!-- Right-side User Dropdown -->
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <img src="<?php echo $_SESSION['profile_image']; ?>" 
-     alt="Profile" 
-     width="32" height="32" 
-     class="rounded-circle me-2">
-
-<a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  <?php if ($showImage): ?>
-    <img src="<?= $profileImage ?>" width="30" height="30" class="rounded-circle me-2" alt="Profile">
-  <?php endif; ?>
-      <span><?= $_SESSION['username'] ?></span>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
-      <li><a class="dropdown-item" href="settings.php">Settings</a></li>
-      <li><a class="dropdown-item" href="profile.php">Profile</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item" href="logout.php" onclick="return confirm('Are you sure you want to logout?')">Logout</a></li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="<?= isset($_SESSION['profile_image']) ? $_SESSION['profile_image'] : 'img/default.png' ?>" width="30" height="30" class="rounded-circle me-2">
+          <span><?= $_SESSION['username'] ?></span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="#">Settings</a></li>
+          <li><a class="dropdown-item" href="user_dashboard.php  ">Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="logout.php" onclick="return confirm('Are you sure you want to logout?')">Logout</a></li>
+        </ul>
+      </li>
     </ul>
-  </li>
-</ul>
 
 
   </div>
