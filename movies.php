@@ -26,56 +26,67 @@ $movies = $getMovies->fetchAll();
     background-color: #121212;
     color: #fff;
   }
+
   .movie-card {
     background-color: #1e1e1e;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     transition: transform 0.2s;
     height: 100%;
     display: flex;
     flex-direction: column;
   }
+
   .movie-card:hover {
     transform: scale(1.03);
   }
+
   .movie-img-link {
     display: block;
   }
+
   .movie-img {
     height: 300px;
     object-fit: cover;
     width: 100%;
     display: block;
   }
+
   .movie-details {
     padding: 15px;
   }
+
   .movie-title {
     font-size: 1.1rem;
     font-weight: bold;
     margin-bottom: 2px;
   }
+
   .movie-type {
     font-size: 0.85rem;
     color: #bbb;
     margin-bottom: 5px;
   }
+
   .movie-rating {
     color: #ffc107;
     font-size: 0.9rem;
     margin-bottom: 5px;
   }
+
   .movie-views {
     font-size: 0.9rem;
     color: #bbb;
     margin-bottom: 5px;
   }
+
   .movie-year {
     font-size: 0.9rem;
     color: #bbb;
     margin-bottom: 5px;
   }
+
   .movie-description {
     font-size: 0.85rem;
     color: #ccc;
@@ -84,6 +95,7 @@ $movies = $getMovies->fetchAll();
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
   .movie-actions a {
     margin-right: 10px;
     text-decoration: none;
@@ -93,9 +105,11 @@ $movies = $getMovies->fetchAll();
     transition: background-color 0.2s;
     display: inline-block;
   }
+
   .btn-update {
     color: #0d6efd;
   }
+
   .btn-delete {
     color: #dc3545;
   }
@@ -124,6 +138,7 @@ $movies = $getMovies->fetchAll();
       </ul>
     </div>
 
+
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" data-bs-toggle="dropdown">
@@ -134,7 +149,9 @@ $movies = $getMovies->fetchAll();
           <li><a class="dropdown-item" href="settings.php">Settings</a></li>
           <li><a class="dropdown-item" href="user_dashboard.php">Profile</a></li>
           <li><a class="dropdown-item" href="watchlist.php">WatchList</a></li>
-          <li><hr class="dropdown-divider"></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
           <li><a class="dropdown-item" href="logout.php" onclick="return confirm('Are you sure you want to logout?')">Logout</a></li>
         </ul>
       </li>
@@ -180,7 +197,7 @@ $movies = $getMovies->fetchAll();
             <div class="movie-description"><?= htmlspecialchars($movie['movie_desc']); ?></div>
             <div class="movie-actions mt-2">
               <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
-                <a href="movieEdit.php?id=<?= $movie['id'] ?>" class="btn-update">Update</a> |   
+                <a href="movieEdit.php?id=<?= $movie['id'] ?>" class="btn-update">Update</a> |
                 <a href="deleteMovie.php?id=<?= $movie['id'] ?>" class="btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
               <?php endif; ?>
             </div>

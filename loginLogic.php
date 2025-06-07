@@ -10,7 +10,7 @@ if (isset($_POST['submit'])) {
     if (empty($username) || empty($password)) {
         echo "Please fill all the fields";
     } else {
-        $sql = "SELECT id, emri, email, username, password, is_admin FROM users WHERE username=:username";
+        $sql = "SELECT id, emri, email, username, password, is_admin, profile_image FROM users WHERE username=:username";
 
         $selectUser = $conn->prepare($sql);
 
@@ -29,7 +29,8 @@ if (isset($_POST['submit'])) {
                 $_SESSION['username'] = $data['username'];
                 $_SESSION['email'] = $data['email'];
                 $_SESSION['is_admin'] = $data['is_admin'];
-
+                $_SESSION['profile_image'] = $data['profile_image'];
+                
                 // Redirect based on admin or user
                 if ($data['is_admin']) {
                     header("Location:   dashboard.php");
