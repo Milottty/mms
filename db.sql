@@ -35,12 +35,14 @@ CREATE TABLE `watchlist` (
   FOREIGN KEY (`movie_id`) REFERENCES `movies`(id)
 );
 
-CREATE TABLE settings (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    site_name VARCHAR(255) NOT NULL,
-    site_description TEXT NOT NULL,
-    logo_url TEXT,
-    theme VARCHAR(10) DEFAULT 'dark'
+
+
+CREATE TABLE  `rating` (
+    `id` int(255)NOT NULL,
+    `user_id` int(255)NOT NULL,
+    `movie_id` int(255)NOT NULL,
+    `date` varchar(255)NOT NULL,
+    `time` varchar(255)NOT NULL
 );
 
 
@@ -57,6 +59,10 @@ ALTER TABLE `bookings`
     ADD PRIMARY KEY (`id`);
 
 
+ALTER TABLE `rating`
+    ADD PRIMARY KEY (`id`);
+
+
 
 
 
@@ -68,6 +74,9 @@ ALTER TABLE `movies`
 
     
 ALTER TABLE `bookings`
+    MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `rating`
     MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `movies`

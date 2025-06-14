@@ -194,7 +194,7 @@ $movies = $getMovies->fetchAll();
             <div class="movie-rating">⭐ <?= htmlspecialchars($movie['movie_rating']); ?>/10</div>
             <div class="movie-views">👁️ Views: <?= (int)$movie['views']; ?></div>
             <div class="movie-year">Year: <?= (int)$movie['year']; ?></div>
-            <div class="movie-description"><?= htmlspecialchars($movie['movie_desc']); ?></div>
+            <div class="movie-description"><?= htmlspecialchars($movie['movie_desc']); ?></div>⭐
             <div class="movie-actions mt-2">
               <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
                 <a href="movieEdit.php?id=<?= $movie['id'] ?>" class="btn-update">Update</a> |

@@ -170,10 +170,10 @@ if (isset($_POST['submit'])) {
             </select>
           </div>
 
-          <div class="mb-3">
+          <!-- <div class="mb-3">
             <label for="movie_rating" class="form-label">Movie Rating</label>
             <input type="number" class="form-control" id="movie_rating" name="movie_rating" min="0" max="10" step="0.1" required>
-          </div>
+          </div> -->
 
           <div class="mb-3">
             <label for="movie_year" class="form-label">Movie Year</label>

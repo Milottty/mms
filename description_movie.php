@@ -1,6 +1,10 @@
 <?php
+session_start();
 include_once "config.php";
 include_once "header.php";
+
+
+
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     echo "<div class='alert alert-danger'>Invalid movie ID.</div>";
@@ -27,10 +31,45 @@ $updateViews = $conn->prepare("UPDATE movies SET views = views + 1 WHERE id = :i
 $updateViews->bindParam(':id', $movie_id, PDO::PARAM_INT);
 $updateViews->execute();
 
+// Handle rating POST (AJAX)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && isset($_SESSION['user'])) {
+    $rating = intval($_POST['rating']);
+    $user_id = $_SESSION['user']['id'];
+    $date = date("Y-m-d");
+
+    $check = $conn->prepare("SELECT * FROM rating WHERE user_id = :user_id AND movie_id = :movie_id");
+    $check->execute(['user_id' => $user_id, 'movie_id' => $movie_id]);
+
+    if ($check->rowCount() > 0) {
+        $update = $conn->prepare("UPDATE rating SET time = :rating, date = :date WHERE user_id = :user_id AND movie_id = :movie_id");
+        $update->execute([
+            'rating' => $rating,
+            'date' => $date,
+            'user_id' => $user_id,
+            'movie_id' => $movie_id
+        ]);
+    } else {
+        $insert = $conn->prepare("INSERT INTO rating (user_id, movie_id, time, date) VALUES (:user_id, :movie_id, :rating, :date)");
+        $insert->execute([
+            'user_id' => $user_id,
+            'movie_id' => $movie_id,
+            'rating' => $rating,
+            'date' => $date
+        ]);
+    }
+    exit;
+}
+
+// Get average rating
+$avg_stmt = $conn->prepare("SELECT AVG(time) as avg_rating FROM rating WHERE movie_id = :movie_id");
+$avg_stmt->execute(['movie_id' => $movie_id]);
+$avg_result = $avg_stmt->fetch();
+$avg_rating = $avg_result && $avg_result['avg_rating'] ? number_format($avg_result['avg_rating'], 1) : 'N/A';
+
 ?>
 
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <style>
   body {
     background-color: #121212;
@@ -89,7 +128,6 @@ $updateViews->execute();
     margin-bottom: 20px;
   }
 
-  /* Play button styled as before (red color) and placed below description */
   .play-button {
     align-self: start;
     display: inline-flex;
@@ -116,6 +154,69 @@ $updateViews->execute();
     height: 20px;
     fill: currentColor;
   }
+
+  /* Star rating dropdown container */
+ .rating-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+  z-index: 10;
+}
+
+.rating-label {
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffc107;
+  font-size: 1.1rem;
+  padding: 2px 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  position: relative;
+  z-index: 15;
+}
+
+
+  /* Dropdown stars container, hidden by default */
+  .stars-dropdown {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    background: #2c2c2c;
+    border-radius: 8px;
+    padding: 6px 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    display: none;
+    z-index: 10;
+    white-space: nowrap;
+  }
+
+  /* Show dropdown on hover of the wrapper */
+.rating-wrapper:hover .stars-dropdown {
+  display: inline-block;
+}
+
+  /* Stars inside dropdown */
+  .stars-dropdown input[type="radio"] {
+    display: none;
+  }
+
+  .stars-dropdown label {
+    font-size: 2rem;
+    color: #444;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  /* Highlight stars on hover or checked */
+  .stars-dropdown label:hover,
+  .stars-dropdown label:hover ~ label,
+  .stars-dropdown input[type="radio"]:checked ~ label {
+    color: #ffc107;
+  }
 </style>
 
 <div class="movie-container">
@@ -132,11 +233,24 @@ $updateViews->execute();
     <h1 class="movie-title">
       <?php echo htmlspecialchars($movie['movie_name']); ?> (<?php echo $year; ?>)
     </h1>
-     <div class="movie-type">
-              <?= htmlspecialchars($movie['type'] ?? 'Movie') ?>
-            </div> <br>
+    <div class="movie-type">
+      <?= htmlspecialchars($movie['type'] ?? 'Movie') ?>
+    </div> <br>
+    <?php if (isset($_SESSION['emri'])):
+        $user_rating = null;
+        ?>
+        <div class="rating-wrapper" title="Hover and select stars to rate">
+          <div class="rating-label">Rate this movie ★</div>
+          <form id="rating-form" method="post" class="stars-dropdown">
+              <?php for ($i = 1; $i <= 5; $i++): ?>
+                <input type="radio" id="star<?= $i ?>" name="rating" value="<?= $i ?>" <?= ($user_rating == $i) ? 'checked' : '' ?>>
+                <label for="star<?= $i ?>">★</label>
+              <?php endfor; ?>
+            </form>
+        </div>
+      <?php endif; ?>
     <div class="movie-meta">
-      <span>⭐ <?php echo htmlspecialchars($movie['movie_rating']); ?>/10</span>
+      <span>⭐ <?php echo htmlspecialchars($user_rating['rating']); ?>/5</span>
       <span>📺 <?php echo htmlspecialchars($movie['movie_quality']); ?></span>
       <span>👁️ <?php echo $views; ?> views</span>
     </div>
@@ -149,5 +263,27 @@ $updateViews->execute();
     </a>
   </div>
 </div>
+
+<script>
+  // Handle star click (rating submission)
+  document.querySelectorAll('.stars-dropdown input[name="rating"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+      const formData = new FormData();
+      formData.append('rating', this.value);
+
+      fetch("", {
+        method: 'POST',
+        body: formData
+      }).then(res => {
+        if (res.ok) {
+          alert("Rating submitted!");
+          location.reload();  // Reload to show updated average
+        } else {
+          alert("Failed to submit rating.");
+        }
+      }).catch(() => alert("Network error."));
+    });
+  });
+</script>
 
 <?php include_once "footer.php"; ?>
