@@ -241,14 +241,16 @@ $avg_rating = $avg_result && $avg_result['avg_rating'] ? number_format($avg_resu
         ?>
         <div class="rating-wrapper" title="Hover and select stars to rate">
           <div class="rating-label">Rate this movie ★</div>
-          <form id="rating-form" method="post" class="stars-dropdown">
+          <form id="rating-form" method="post" class="stars-dropdown" action="">
               <?php for ($i = 1; $i <= 5; $i++): ?>
                 <input type="radio" id="star<?= $i ?>" name="rating" value="<?= $i ?>" <?= ($user_rating == $i) ? 'checked' : '' ?>>
                 <label for="star<?= $i ?>">★</label>
               <?php endfor; ?>
             </form>
         </div>
-      <?php endif; ?>
+      <?php endif;
+      
+      ?>
     <div class="movie-meta">
       <span>⭐ <?php echo htmlspecialchars($user_rating['rating']); ?>/5</span>
       <span>📺 <?php echo htmlspecialchars($movie['movie_quality']); ?></span>
