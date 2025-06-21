@@ -32,41 +32,41 @@ $updateViews->bindParam(':id', $movie_id, PDO::PARAM_INT);
 $updateViews->execute();
 
 // Handle rating POST (AJAX)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && isset($_SESSION['user'])) {
-    $rating = intval($_POST['rating']);
-    $user_id = $_SESSION['user']['id'];
-    $date = date("Y-m-d");
+// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && isset($_SESSION['user'])) {
+//     $rating = intval($_POST['rating']);
+//     $user_id = $_SESSION['user']['id'];
+//     $date = date("Y-m-d");
 
-    $check = $conn->prepare("SELECT * FROM rating WHERE user_id = :user_id AND movie_id = :movie_id");
-    $check->execute(['user_id' => $user_id, 'movie_id' => $movie_id]);
+//     $check = $conn->prepare("SELECT * FROM rating WHERE user_id = :user_id AND movie_id = :movie_id");
+//     $check->execute(['user_id' => $user_id, 'movie_id' => $movie_id]);
 
-    if ($check->rowCount() > 0) {
-        $update = $conn->prepare("UPDATE rating SET time = :rating, date = :date WHERE user_id = :user_id AND movie_id = :movie_id");
-        $update->execute([
-            'rating' => $rating,
-            'date' => $date,
-            'user_id' => $user_id,
-            'movie_id' => $movie_id
-        ]);
-    } else {
-        $insert = $conn->prepare("INSERT INTO rating (user_id, movie_id, time, date) VALUES (:user_id, :movie_id, :rating, :date)");
-        $insert->execute([
-            'user_id' => $user_id,
-            'movie_id' => $movie_id,
-            'rating' => $rating,
-            'date' => $date
-        ]);
-    }
-    exit;
-}
+//     if ($check->rowCount() > 0) {
+//         $update = $conn->prepare("UPDATE rating SET time = :rating, date = :date WHERE user_id = :user_id AND movie_id = :movie_id");
+//         $update->execute([
+//             'rating' => $rating,
+//             'date' => $date,
+//             'user_id' => $user_id,
+//             'movie_id' => $movie_id
+//         ]);
+//     } else {
+//         $insert = $conn->prepare("INSERT INTO rating (user_id, movie_id, time, date) VALUES (:user_id, :movie_id, :rating, :date)");
+//         $insert->execute([
+//             'user_id' => $user_id,
+//             'movie_id' => $movie_id,
+//             'rating' => $rating,
+//             'date' => $date
+//         ]);
+//     }
+//     exit;
+// }
 
 // Get average rating
-$avg_stmt = $conn->prepare("SELECT AVG(time) as avg_rating FROM rating WHERE movie_id = :movie_id");
-$avg_stmt->execute(['movie_id' => $movie_id]);
-$avg_result = $avg_stmt->fetch();
-$avg_rating = $avg_result && $avg_result['avg_rating'] ? number_format($avg_result['avg_rating'], 1) : 'N/A';
+// $avg_stmt = $conn->prepare("SELECT AVG(time) as avg_rating FROM rating WHERE movie_id = :movie_id");
+// $avg_stmt->execute(['movie_id' => $movie_id]);
+// $avg_result = $avg_stmt->fetch();
+// $avg_rating = $avg_result && $avg_result['avg_rating'] ? number_format($avg_result['avg_rating'], 1) : 'N/A';
 
-?>
+// ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -241,7 +241,7 @@ $avg_rating = $avg_result && $avg_result['avg_rating'] ? number_format($avg_resu
         ?>
         <div class="rating-wrapper" title="Hover and select stars to rate">
           <div class="rating-label">Rate this movie ★</div>
-          <form id="rating-form" method="post" class="stars-dropdown" action="">
+          <form id="rating-form" method="post" class="stars-dropdown" action="descLogic.php">
               <?php for ($i = 1; $i <= 5; $i++): ?>
                 <input type="radio" id="star<?= $i ?>" name="rating" value="<?= $i ?>" <?= ($user_rating == $i) ? 'checked' : '' ?>>
                 <label for="star<?= $i ?>">★</label>
