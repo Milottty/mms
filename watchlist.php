@@ -29,6 +29,9 @@ $sql = "SELECT m.* FROM movies m
 $stmt = $conn->prepare($sql);
 $stmt->execute([$userId]);
 $watchedMovies = $stmt->fetchAll();
+$ratings = $conn->query("SELECT movie_id, AVG(rating) AS avg_rating FROM rating GROUP BY movie_id")->fetchAll(PDO::FETCH_KEY_PAIR);
+
+
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -134,7 +137,10 @@ $watchedMovies = $stmt->fetchAll();
           <div class="movie-details">
             <div class="movie-title"><?php echo htmlspecialchars($movie['movie_name']); ?></div>
             <div class="movie-type"><?= htmlspecialchars($movie['type'] ?? 'Movie') ?></div>
-            <div class="movie-rating">⭐ <?php echo htmlspecialchars($movie['movie_rating']); ?>/10</div>
+            <?php
+                  $avg = isset($ratings[$movie['id']]) ? number_format($ratings[$movie['id']], 1) : 'N/A';
+            ?>
+                  <div class="movie-rating">⭐ <?= $avg ?> / 5</div>
             <div class="movie-views">👁️ Views: <?php echo (int)$movie['views']; ?></div>
             <div class="movie-description"><?php echo htmlspecialchars($movie['movie_desc']); ?></div>
           </div>

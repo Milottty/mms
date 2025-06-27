@@ -26,6 +26,7 @@ function seededShuffle(&$array, $seed) {
 
 seededShuffle($allMovies, $seed);
 $movies = array_slice($allMovies, 0, $moviesToShow);
+$ratings = $conn->query("SELECT movie_id, AVG(rating) AS avg_rating FROM rating GROUP BY movie_id")->fetchAll(PDO::FETCH_KEY_PAIR);
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -124,7 +125,10 @@ $movies = array_slice($allMovies, 0, $moviesToShow);
           <div class="movie-details">
             <div class="movie-title"><?= htmlspecialchars($movie['movie_name']); ?></div>
             <div class="movie-type"><?= htmlspecialchars($movie['type'] ?? 'Movie'); ?></div>
-            <div class="movie-rating">⭐ <?= htmlspecialchars($movie['movie_rating']); ?>/10</div>
+             <?php
+                  $avg = isset($ratings[$movie['id']]) ? number_format($ratings[$movie['id']], 1) : 'N/A';
+            ?>
+                  <div class="movie-rating">⭐ <?= $avg ?> / 5</div>
             <div class="movie-year">Year: <?= (int)$movie['year']; ?></div>
             <div class="movie-description"><?= htmlspecialchars($movie['movie_desc']); ?></div>
             <div class="movie-actions mt-2">
