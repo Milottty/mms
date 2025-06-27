@@ -1,8 +1,14 @@
-<?php include_once "header.php"?>
+<?php 
+  include_once "config.php";
+  include_once "header.php";
 
 
-
-
+?>
+<style>
+  .dashboard{
+    color: red;
+  }
+</style>
 
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
   <div class="container-fluid">
@@ -38,6 +44,9 @@
           <li><a class="dropdown-item" href="settings.php">Settings</a></li>
           <li><a class="dropdown-item" href="user_dashboard.php">Profile</a></li>
           <li><a class="dropdown-item" href="watchlist.php">WatchList</a></li>
+          <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === '1'): ?>
+                        <li><a class="dropdown-item dashboard" href="dashboard.php">Dashboard</a></li>
+                    <?php endif; ?>
           <li>
             <hr class="dropdown-divider">
           </li>
@@ -48,4 +57,9 @@
   </div>
 </nav>
 
-<?php include_once "footer.php"?>
+
+<?php 
+  include_once "footer.php";
+
+
+?>

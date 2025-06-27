@@ -35,7 +35,11 @@ CREATE TABLE `bookings` (
   `date` varchar(255) NOT NULL,
   `time` varchar(255) NOT NULL,
   `cinema` varchar(50) NOT NULL
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`movie_id`) REFERENCES movies(`id`) ON DELETE CASCADE
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 --
 -- Dumping data for table `bookings`
@@ -209,3 +213,14 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+CREATE TABLE `rating` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `movie_id` INT NOT NULL,
+    `rating` TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    `date_rated` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_rating (`user_id`, `movie_id`),
+    FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`movie_id`) REFERENCES movies(`id`) ON DELETE CASCADE
+);

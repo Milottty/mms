@@ -2,15 +2,14 @@
 session_start();
 include_once "config.php";
 include_once "header.php";
+include_once "navbar.php";
 
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
 
-// Check if user is admin
 if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1) {
-    // Admin: get all bookings
     $sql = "SELECT bookings.id, users.username, movies.movie_name, bookings.nr_tickets, bookings.date, bookings.time 
             FROM bookings 
             INNER JOIN users ON bookings.user_id = users.id 
@@ -66,41 +65,6 @@ if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1) {
 </style>
 
 <!-- Transparent Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold text-white" href="#">Admin Panel</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    
-    <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
-      <ul class="navbar-nav mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link text-white" href="movies.php">Movies</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active text-white" href="bookings.php">Bookings</a>
-        </li>
-      </ul>
-    </div>
-
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="<?= isset($_SESSION['profile_image']) ? $_SESSION['profile_image'] : 'img/default.png' ?>" width="30" height="30" class="rounded-circle me-2">
-          <span><?= $_SESSION['username'] ?></span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><a class="dropdown-item" href="user_dashboard.php  ">Profile</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="logout.php" onclick="return confirm('Are you sure you want to logout?')">Logout</a></li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-</nav>
-
 <!-- Page Content -->
 <div class="container mt-5">
     <h1 class="mb-4">Bookings</h1>

@@ -1,9 +1,18 @@
 <?php
+
+
+
 session_start();
 include_once "config.php";
 include_once "header.php";
 
-
+$user_id = null;
+if (isset($_SESSION['username'])) {
+    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+    $stmt->execute([$_SESSION['username']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($user) $user_id = $user['id'];
+}
 
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -31,42 +40,40 @@ $updateViews = $conn->prepare("UPDATE movies SET views = views + 1 WHERE id = :i
 $updateViews->bindParam(':id', $movie_id, PDO::PARAM_INT);
 $updateViews->execute();
 
-// Handle rating POST (AJAX)
-// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && isset($_SESSION['user'])) {
-//     $rating = intval($_POST['rating']);
-//     $user_id = $_SESSION['user']['id'];
-//     $date = date("Y-m-d");
 
-//     $check = $conn->prepare("SELECT * FROM rating WHERE user_id = :user_id AND movie_id = :movie_id");
-//     $check->execute(['user_id' => $user_id, 'movie_id' => $movie_id]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && $user_id) {
+    $rating = intval($_POST['rating']);
+    if ($rating >= 1 && $rating <= 5) {
+        $check = $conn->prepare("SELECT * FROM rating WHERE user_id = :uid AND movie_id = :mid");
+        $check->execute(['uid' => $user_id, 'mid' => $movie_id]);
 
-//     if ($check->rowCount() > 0) {
-//         $update = $conn->prepare("UPDATE rating SET time = :rating, date = :date WHERE user_id = :user_id AND movie_id = :movie_id");
-//         $update->execute([
-//             'rating' => $rating,
-//             'date' => $date,
-//             'user_id' => $user_id,
-//             'movie_id' => $movie_id
-//         ]);
-//     } else {
-//         $insert = $conn->prepare("INSERT INTO rating (user_id, movie_id, time, date) VALUES (:user_id, :movie_id, :rating, :date)");
-//         $insert->execute([
-//             'user_id' => $user_id,
-//             'movie_id' => $movie_id,
-//             'rating' => $rating,
-//             'date' => $date
-//         ]);
-//     }
-//     exit;
-// }
+        if ($check->rowCount() > 0) {
+            $update = $conn->prepare("UPDATE rating SET rating = :r WHERE user_id = :uid AND movie_id = :mid");
+            $update->execute(['r' => $rating, 'uid' => $user_id, 'mid' => $movie_id]);
+        } else {
+            $insert = $conn->prepare("INSERT INTO rating (user_id, movie_id, rating) VALUES (:uid, :mid, :r)");
+            $insert->execute(['uid' => $user_id, 'mid' => $movie_id, 'r' => $rating]);
+        }
+        exit;
+    }
+}
 
-// Get average rating
-// $avg_stmt = $conn->prepare("SELECT AVG(time) as avg_rating FROM rating WHERE movie_id = :movie_id");
-// $avg_stmt->execute(['movie_id' => $movie_id]);
-// $avg_result = $avg_stmt->fetch();
-// $avg_rating = $avg_result && $avg_result['avg_rating'] ? number_format($avg_result['avg_rating'], 1) : 'N/A';
 
-// ?>
+$user_rating = null;
+if ($user_id) {
+    $stmt = $conn->prepare("SELECT rating FROM rating WHERE user_id = ? AND movie_id = ?");
+    $stmt->execute([$user_id, $movie_id]);
+    $user_rating = $stmt->fetchColumn();
+}
+
+$stmt = $conn->prepare("SELECT AVG(rating) as avg_rating FROM rating WHERE movie_id = ?");
+$stmt->execute([$movie_id]);
+$avg_rating = $stmt->fetchColumn();
+$avg_rating = $avg_rating ? number_format($avg_rating, 1) : 'N/A';
+
+
+
+?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -217,8 +224,29 @@ $updateViews->execute();
   .stars-dropdown input[type="radio"]:checked ~ label {
     color: #ffc107;
   }
+   .btn-update-like {
+    color: #0d6efd;
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+    display: inline-block;
+    font-size: 0.85rem;
+  }
+  .btn-update-like:hover {
+    background-color: #0d6efd;
+    color: white;
+    text-decoration: none;
+  }
+  .back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1050;
+  }
 </style>
 
+<a href="movies.php" class="btn-update-like back-button">← Back to Movies</a>
 <div class="movie-container">
   <div class="movie-poster">
     <?php if ($movie['movie_image'] && file_exists($movie['movie_image'])): ?>
@@ -252,7 +280,7 @@ $updateViews->execute();
       
       ?>
     <div class="movie-meta">
-      <span>⭐ <?php echo htmlspecialchars($user_rating['rating']); ?>/5</span>
+     <span>⭐ <?= $avg_rating ?>/5</span>
       <span>📺 <?php echo htmlspecialchars($movie['movie_quality']); ?></span>
       <span>👁️ <?php echo $views; ?> views</span>
     </div>

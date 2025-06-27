@@ -2,6 +2,7 @@
 session_start(); // Must be first before any output
 include_once "config.php";
 include_once "header.php";
+include_once "navbar.php";
 
 // Get filter param from URL
 $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
@@ -18,6 +19,9 @@ if ($filter === 'movie') {
 $getMovies = $conn->prepare($sql);
 $getMovies->execute();
 $movies = $getMovies->fetchAll();
+
+$ratings = $conn->query("SELECT movie_id, AVG(rating) AS avg_rating FROM rating GROUP BY movie_id")->fetchAll(PDO::FETCH_KEY_PAIR);
+
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -113,51 +117,9 @@ $movies = $getMovies->fetchAll();
   .btn-delete {
     color: #dc3545;
   }
+
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold text-white" href="#">User Panel</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
-      <ul class="navbar-nav mb-2 mb-lg-0">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-white" href="#" id="cinemaDropdown" role="button" data-bs-toggle="dropdown">
-            Cinemas
-          </a>
-          <ul class="dropdown-menu dropdown-menu-dark">
-            <li><a class="dropdown-item" href="cinestar.php">Cinestar</a></li>
-            <li><a class="dropdown-item" href="cineplex.php">Cineplex</a></li>
-          </ul>
-        </li>
-        <li class="nav-item"><a class="nav-link text-white" href="movies.php">Movies</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="bookings.php">Bookings</a></li>
-      </ul>
-    </div>
-
-
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" data-bs-toggle="dropdown">
-          <img src="<?= isset($_SESSION['profile_image']) ? $_SESSION['profile_image'] : 'img/default.png' ?>" width="30" height="30" class="rounded-circle me-2" alt="Profile">
-          <span><?= htmlspecialchars($_SESSION['username'] ?? 'Guest') ?></span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
-          <li><a class="dropdown-item" href="settings.php">Settings</a></li>
-          <li><a class="dropdown-item" href="user_dashboard.php">Profile</a></li>
-          <li><a class="dropdown-item" href="watchlist.php">WatchList</a></li>
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-          <li><a class="dropdown-item" href="logout.php" onclick="return confirm('Are you sure you want to logout?')">Logout</a></li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-</nav>
 
 <div class="container my-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
@@ -191,7 +153,11 @@ $movies = $getMovies->fetchAll();
           <div class="movie-details">
             <div class="movie-title"><?= htmlspecialchars($movie['movie_name']); ?></div>
             <div class="movie-type"><?= htmlspecialchars($movie['type'] ?? 'Movie') ?></div>
-            <div class="movie-rating">⭐ <?= htmlspecialchars($movie['movie_rating']); ?>/10</div>
+            <?php
+                  $avg = isset($ratings[$movie['id']]) ? number_format($ratings[$movie['id']], 1) : 'N/A';
+            ?>
+                  <div class="movie-rating">⭐ <?= $avg ?> / 5</div>
+
             <div class="movie-views">👁️ Views: <?= (int)$movie['views']; ?></div>
             <div class="movie-year">Year: <?= (int)$movie['year']; ?></div>
             <div class="movie-description"><?= htmlspecialchars($movie['movie_desc']); ?></div>
