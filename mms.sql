@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 25, 2025 at 10:05 PM
+-- Generation Time: Jun 28, 2025 at 11:35 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -28,27 +28,23 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `bookings` (
-  `id` int(255) NOT NULL,
-  `user_id` int(255) NOT NULL,
-  `movie_id` int(255) NOT NULL,
-  `nr_tickets` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `movie_id` int(11) NOT NULL,
+  `nr_tickets` int(11) NOT NULL,
   `date` varchar(255) NOT NULL,
   `time` varchar(255) NOT NULL,
   `cinema` varchar(50) NOT NULL
-  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`movie_id`) REFERENCES movies(`id`) ON DELETE CASCADE
-
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 --
 -- Dumping data for table `bookings`
 --
 
 INSERT INTO `bookings` (`id`, `user_id`, `movie_id`, `nr_tickets`, `date`, `time`, `cinema`) VALUES
-(1, 2, 1, 2, '2025-05-15', '00:23', ''),
+(1, 2, 2, 2, '2025-05-15', '00:23', ''),
 (2, 1, 3, 2, '2025-04-30', '06:41', 'Cinestar'),
-(3, 5, 2, 4, '2025-05-13', '21:51', 'Cinestar');
+(3, 5, 11, 4, '2025-05-13', '21:51', 'Cinestar');
 
 -- --------------------------------------------------------
 
@@ -57,7 +53,7 @@ INSERT INTO `bookings` (`id`, `user_id`, `movie_id`, `nr_tickets`, `date`, `time
 --
 
 CREATE TABLE `movies` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `movie_name` varchar(255) NOT NULL,
   `movie_desc` varchar(255) NOT NULL,
   `movie_quality` varchar(255) NOT NULL,
@@ -78,7 +74,7 @@ INSERT INTO `movies` (`id`, `movie_name`, `movie_desc`, `movie_quality`, `movie_
 (2, 'The Walking Dead', '\"The Walking Dead\" is a post-apocalyptic horror series following a group of survivors navigating a world overrun by zombies.', 'Full HD', '9', 2010, 1202559, 'uploads/TheWalkingDeadPoster.jpg', 'serial', 'https://www.youtube.com/watch?v=R1v0uFms68U', 'Cineplex'),
 (3, 'The Fast and the Furious', '\"The Fast and the Furious\"  is an action film that follows Brian O\'Conner, an undercover LAPD officer.', 'Full HD', '8', 2001, 429293, 'uploads/Fast_One_Poster.webp', 'movie', 'https://www.youtube.com/watch?v=L_Cb1OepkY8', 'Cineplex'),
 (11, 'The Godfather', 'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.', 'HD', '8', 2000, 7759191, 'uploads/download (4).jfif', 'Movie', 'https://www.youtube.com/watch?v=oNA6iInsRVg', 'Cineplex'),
-(12, 'The Dark Knight', '\"The Dark Knight\" is a superhero film about Batman (Christian Bale) and his struggle against the Joker (Heath Ledger), a chaotic criminal mastermind who wreaks havoc in Gotham City. The film also explores the complexities of Batman\'s identity and his rela', 'Full HD', '8', 2008, 6256778, 'uploads/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_FMjpg_UX1000_.jpg', 'Movie', 'https://www.youtube.com/watch?v=EXeTwQWrcwY', 'Cineplex'),
+(12, 'The Dark Knight', '\"The Dark Knight\" is a superhero film about Batman (Christian Bale) and his struggle against the Joker (Heath Ledger), a chaotic criminal mastermind who wreaks havoc in Gotham City. The film also explores the complexities of Batman\'s identity and his rela', 'Full HD', '8', 2008, 6256779, 'uploads/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_FMjpg_UX1000_.jpg', 'Movie', 'https://www.youtube.com/watch?v=EXeTwQWrcwY', 'Cineplex'),
 (13, 'Gladiator', 'A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.', 'Full HD', '8', 2000, 5599813, 'uploads/Gladiator_(2000_film_poster).png', 'Movie', 'https://www.youtube.com/watch?v=P5ieIbInFpg', 'Cineplex'),
 (14, 'American Psycho', 'A wealthy New York City investment banking executive, Patrick Bateman, hides his alternate psychopathic ego from his co-workers and friends as he delves deeper into his violent, hedonistic fantasies.', 'HD', '7', 2000, 4665217, 'uploads/MV5BNzBjM2I5ZjUtNmIzNy00OGNkLWIwZDMtOTAwYWUwMzA2YjdlXkEyXkFqcGc@._V1_.jpg', 'Movie', 'https://www.youtube.com/watch?v=81mibtQWWBg', 'Cineplex'),
 (15, 'Finding Nemo', 'After his son is captured in the Great Barrier Reef and taken to Sydney, a timid clownfish sets out on a journey to bring him home.', 'HD', '8', 2003, 7609208, 'uploads/nemo.jpg', 'Movie', 'https://www.youtube.com/watch?v=9oQ628Seb9w', 'Cineplex'),
@@ -89,11 +85,25 @@ INSERT INTO `movies` (`id`, `movie_name`, `movie_desc`, `movie_quality`, `movie_
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `rating`
+--
+
+CREATE TABLE `rating` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `movie_id` int(11) NOT NULL,
+  `rating` tinyint(4) NOT NULL CHECK (`rating` between 1 and 5),
+  `date_rated` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `emri` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -130,8 +140,6 @@ CREATE TABLE `watchlist` (
   `watched_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
-
 --
 -- Dumping data for table `watchlist`
 --
@@ -148,13 +156,23 @@ INSERT INTO `watchlist` (`id`, `user_id`, `movie_id`, `watched_at`) VALUES
 -- Indexes for table `bookings`
 --
 ALTER TABLE `bookings`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `movie_id` (`movie_id`);
 
 --
 -- Indexes for table `movies`
 --
 ALTER TABLE `movies`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `rating`
+--
+ALTER TABLE `rating`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_rating` (`user_id`,`movie_id`),
+  ADD KEY `movie_id` (`movie_id`);
 
 --
 -- Indexes for table `users`
@@ -178,19 +196,13 @@ ALTER TABLE `watchlist`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `movies`
+-- AUTO_INCREMENT for table `rating`
 --
-ALTER TABLE `movies`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+ALTER TABLE `rating`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `watchlist`
@@ -203,6 +215,20 @@ ALTER TABLE `watchlist`
 --
 
 --
+-- Constraints for table `bookings`
+--
+ALTER TABLE `bookings`
+  ADD CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `rating`
+--
+ALTER TABLE `rating`
+  ADD CONSTRAINT `rating_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `rating_ibfk_2` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `watchlist`
 --
 ALTER TABLE `watchlist`
@@ -213,14 +239,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-CREATE TABLE `rating` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `user_id` INT NOT NULL,
-    `movie_id` INT NOT NULL,
-    `rating` TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    `date_rated` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_rating (`user_id`, `movie_id`),
-    FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`movie_id`) REFERENCES movies(`id`) ON DELETE CASCADE
-);
